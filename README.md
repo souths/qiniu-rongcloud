@@ -1,5 +1,5 @@
 # rou
-
+参考文章:记录一下前端分片上传七牛云踩过的坑--》https://segmentfault.com/a/1190000010605561
 > A Vue.js project
 
 ## Build Setup
