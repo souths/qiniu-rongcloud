@@ -1,33 +1,32 @@
 <template>
   <div id="app">
+    <h1>以下是使用七牛云js-sdk1.x上传方法</h1>    
     <h2>上传之前先
       <a class='link' href='http://jssdk.demo.qiniu.io/uptoken'>点击我</a>获取最新token把Qiniu.uploader({uptoken: 'xxx'})替换下</h2>
     <span id='pickfiles' class="pickfiles">上传按钮</span>
     <div class="progress">{{progress}}</div>
     <button @click="qx">取消上传</button>
-
     <router-view/>
+    <hr>
+    <h1>以下是使用七牛云js-sdk2.x上传方法</h1>
+    <!-- 分割线 -->
+    <div style="width:120px;height:120px;position:relative;margin:0 auto;">
+      <span style="width:100%;height:100%;position:absolute;top:0;left:0;" class="pickfiles">上传按钮</span>
+      <input class="file-input" type="file" id="select2" @change="fil" ref="referenceUpload" style="display:block;position:absolute;width:100%;height:100%;top:0;left:0;z-index:1000;opacity:0">
+    </div>
   </div>
 </template>
 
 <script>
   import axios from 'axios'
-  import {
-    resolve
-  } from 'url';
-  import {
-    RSA_PKCS1_PADDING
-  } from 'constants';
-  import {
-    setTimeout
-  } from 'timers';
+  import * as qiniu from 'qiniu-js' //七牛云js-sdk2.x版本
   export default {
     name: 'App',
     data() {
       return {
         progress: '',
         qiniuUPtoken: '',
-        stop:''
+        stop: ''
       }
     },
     created() {},
@@ -36,30 +35,31 @@
       this.initQiniu()
     },
     methods: {
-      qx(){
+      qx() {
         console.log(this.stop);
-        
-          this.stop.removeFile('pickfiles')
-          
+        this.stop.removeFile('pickfiles')
       },
       async gettoken() {
         let {
           data
         } = await axios.get('http://localhost:3000/')
         this.qiniuUPtoken = data.uptoken
-
       },
+      //七牛云js-sdk1.x版本的使用方法
+      /*js-sdk1.x版本的使用需要plupload/2.1.1和qiniu.js,并且qiniu.js需要下载放到static目录下,在main.js中导入
+      因为从后端获取七牛云的token是异步的，所以需要使用setTimeout延迟加载Qiniu.uploader
+      */
       initQiniu() {
         setTimeout(() => {
           /* eslint-disable */
-       this.stop = Qiniu.uploader({
+          Qiniu.uploader({
             runtimes: 'html5,flash,html4',
             browse_button: 'pickfiles',
             flash_swf_url: 'https://cdn.bootcss.com/plupload/2.1.1/Moxie.swf',
             chunk_size: '4mb',
-            // uptoken: 'EJSMfaW17JqEKSXvq3qnwBGrL3udouIqBlRl5Xpy:355JkDkHX9Jf0XdzM8optu68E1g=:eyJzY29wZSI6ImltYWdlcyIsImRlYWRsaW5lIjoxNTI5NTkyNTg2fQ==',
+            uptoken: 'EJSMfaW17JqEKSXvq3qnwBGrL3udouIqBlRl5Xpy:UyOCah90Rb28mV866BWSm1i_Qi0=:eyJzY29wZSI6ImltYWdlcyIsImRlYWRsaW5lIjoxNTI5NjM1Mjg3fQ==',
             // uptoken_url: 'http://jssdk.demo.qiniu.io/uptoken',
-            uptoken: this.qiniuUPtoken,
+            // uptoken: this.qiniuUPtoken,
             domain: 'http://qiniu-plupload.qiniudn.com/',
             get_new_uptoken: false,
             auto_start: true,
@@ -98,6 +98,50 @@
 
 
 
+      },
+      // 分割线 js-sdk2.x版本使用方法
+      /**
+       * js-sdk2.x版本使用，此处是通过h5的input type=“file”来上传，只需要npm install qiniu-js --save
+       * 然后在需要的vue页面 import * as qiniu from 'qiniu-js'
+       */
+      fil() {
+        //拿到文件的信息
+        let file = this.$refs.referenceUpload.files[0]
+        // 设置next,error,complete对应的操作，分别处理相应的进度信息，错误信息，以及完成后的操作
+        var error = function (err) {
+          console.log(err, 'complete');
+
+        };
+
+        var complete = function (res) {
+          console.log(res, 'complete');
+
+        };
+
+        var next = function (response) {
+          console.log(response, 'next');
+
+        };
+
+        var subObject = {
+          next: next,
+          error: error,
+          complete: complete
+        };
+        var putExtra = {
+          fname: "",
+          params: {},
+          mimeType: null
+        };
+        var config = {
+          useCdnDomain: false,
+          region: null,
+        };
+        //后端取到七牛云的token，然后前端通过后端定义的接口拿到七牛云的token
+        var token = this.qiniuUPtoken
+        var key = file.name;
+        let observable = qiniu.upload(file, key, token, putExtra, config);
+        let subscription = observable.subscribe(subObject);
       }
     }
 
