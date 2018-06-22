@@ -7,7 +7,8 @@
 > A Vue.js project
 
 ## Build Setup
-
+文件夹说明：
+server-node文件夹是node后端代码，用来获取七牛云的token，除server-node文件夹外都是前端代码
 ``` bash
 # install dependencies
 npm install
