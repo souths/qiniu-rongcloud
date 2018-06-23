@@ -30,5 +30,9 @@ export default new Router({
         component: Home
       }
     ]
+  },{
+    path:'/video',
+    name:'video',
+    component: add,
   }]
 })

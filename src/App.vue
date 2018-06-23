@@ -6,7 +6,7 @@
     <span id='pickfiles' class="pickfiles">上传按钮</span>
     <div class="progress">{{progress}}</div>
     <button @click="qx">取消上传</button>
-    <router-view/>
+   
     <hr>
     <h1>以下是使用七牛云js-sdk2.x上传方法</h1>
     <!-- 分割线 -->
@@ -14,6 +14,9 @@
       <span style="width:100%;height:100%;position:absolute;top:0;left:0;" class="pickfiles">上传按钮</span>
       <input class="file-input" type="file" id="select2" @change="fil" ref="referenceUpload" style="display:block;position:absolute;width:100%;height:100%;top:0;left:0;z-index:1000;opacity:0">
     </div>
+    <hr style="margin-top:50px">
+    <h1>以下是对七牛云js-sdk封装冲vue的插件使用，具体看common/js/qiniuUp.js</h1>
+     <router-view/>
   </div>
 </template>
 
