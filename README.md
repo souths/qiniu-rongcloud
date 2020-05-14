@@ -9,7 +9,7 @@
 融云3.x文档 https://docs.rongcloud.cn/v3/views/im/noui/guide/quick/include/web3.html
 ## Build Setup
 文件夹说明：
-server-node文件夹是node后端代码，用来获取七牛云的token，除server-node文件夹外都是前端代码
+server-node文件夹是node后端代码，用来获取七牛云的token和融云token，rongcloud-demo是融云前端demo,qiniu-demo是七牛云前端demo
 ``` bash
 # install dependencies
 npm install
